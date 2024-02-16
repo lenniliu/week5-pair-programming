@@ -5,9 +5,47 @@ const Registration = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     console.log(event);
+    event.preventDefault(); 
+
+    if (password !== confirmPassword) {
+      // If passwords do not match, set an error message and stop the form submission
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setError("");
+
+    const userData = {
+      name,
+      email,
+      password,
+      confirmPassword,
+    };
+
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(userData), 
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json(); 
+      console.log(data); 
+      
+    } catch (error) {
+      console.error('There was a problem with your fetch operation:', error);
+    }
   };
   return (
     <div className="login-page">

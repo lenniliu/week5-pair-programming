@@ -1,10 +1,18 @@
-import { tours } from "../data";
+import { useEffect } from "react";
 import Tour from "./Tour";
 import Title from "./Title";
 import { useState } from "react";
 
 function Tours() {
-  const [toursData, setToursData] = useState(tours);
+  const [toursData, setToursData] = useState([]);
+  const apiUrl = "localhost:3000/tours";
+
+  useEffect(() => {
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => setToursData(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
 
   const handleDeleteItem = (itemId) => {
     console.log(itemId);
