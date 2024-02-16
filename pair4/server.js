@@ -9,7 +9,6 @@ app.use(express.json());
 // Define a Mongoose schema for the user
 const userSchema = new mongoose.Schema({
   username: String,
-  password: String,
   hashedPassword: String,
 });
 
@@ -19,7 +18,7 @@ const User = mongoose.model("User", userSchema);
 // Connect to MongoDB database
 mongoose
   .connect(
-    "mongodb+srv://WebDev:oSM3Ygq2NGic2UCt@programminglessons.uhgdrol.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://pairprogramming5:WMJvL7j5yNEcDHGR@pairprogramming5.rrwt3br.mongodb.net/?retryWrites=true&w=majority"
   )
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Failed to connect to MongoDB", err));
@@ -27,15 +26,30 @@ mongoose
 
 // Endpoint for user registration
 app.post("/api/users", async (req, res) => {
-  const { username, password } = req.body;
-
-  const hashedPassword = await bcrypt.hash(password, saltRounds,);
-  // Create a new user document and save it to the database
-  const newUser = new User({ username, password, hashedPassword });
-  await newUser.save();
-
-  res.status(201).json({ message: "User registered successfully" });
-});
+    try {
+      const { username, password } = req.body;
+      if (!username || !password ) {
+        return res.status(400).json({ error: "Username and password required" });
+      }
+  
+      const salt = await bcrypt.genSalt(saltRounds);
+      console.log('Salt generated');
+  
+      const hashedPassword = await bcrypt.hash(password, salt);
+      console.log('Password hashed');
+  
+      const newUser = new User({ username, hashedPassword: hashedPassword });
+      console.log('User object created');
+  
+      const savedUser = await newUser.save();
+      console.log('User saved');
+  
+      res.status(201).json(savedUser);
+    } catch (error) {
+      console.error('Error:', error.message, error.stack);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
 // Endpoint to authenticate a user
 app.post("/api/users/login", async (req, res) => {
