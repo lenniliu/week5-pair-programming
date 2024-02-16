@@ -5,7 +5,7 @@ import { useState } from "react";
 
 function Tours() {
   const [toursData, setToursData] = useState([]);
-  const apiUrl = "localhost:3000/tours";
+  const apiUrl = "";
 
   useEffect(() => {
     fetch(apiUrl)
